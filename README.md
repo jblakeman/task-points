@@ -8,9 +8,9 @@ User Stories
 
 * A User can view a list of tasks
 * " "    "   create, view, update or delete a task or sub task
-* Specify an enjoyment level to a task
-* "       "  estimated completion time " " "
-* Tag with a category
+* " "    "   specify an enjoyment level to a task
+* " "    "   "       "  estimated completion time " " "
+* " "    "   add/remove (a) tag(s) to/from " "
 
 Task Properties
 ----
