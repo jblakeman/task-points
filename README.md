@@ -15,12 +15,12 @@ User Stories
 Task Properties
 ----
 
-    1.  Body
-    2.  Estimated completion time
-    3.  Points
-    4.  Sub-task List (optional)
-    5.  Enjoyment level
-    6.  Tag (category)
+1.  Body
+2.  Estimated completion time
+3.  Points
+4.  Sub-task List (optional)
+5.  Enjoyment level
+6.  Tag (category)
 
 ###Body###
 
