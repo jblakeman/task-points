@@ -1,4 +1,4 @@
-My ToDo
+Task Points
 ====
 
 Use game-theory based positive reinforcement as motivation to accomplish things
