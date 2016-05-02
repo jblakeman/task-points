@@ -10,17 +10,18 @@ describe("starting express", function() {
     it("responds to root", function testRoot(done) {
         request(server)
             .get("/")
-            .expect(200, done);
+            .expect(200, {title: "Welcome"}, done);
     });
     it("responds to task index", function testTaskIndex(done) {
         request(server)
             .get("/tasks")
-            .expect(200, done);
+            .expect(200, {title: "Task Index"}, done);
     });
     it("responds to task show", function testTaskShow(done) {
+        var id = "1";
         request(server)
-            .get("/tasks/1")
-            .expect(200, done);
+            .get("/tasks/" + id)
+            .expect(200, {id: id, title: "Task Show"}, done);
     });
     it("404s a bad index", function testBadIndex(done) {
         request(server)

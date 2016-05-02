@@ -1,19 +1,15 @@
-
 function serverFactory() {
-    var express = require("express");
+    var express     = require("express");
+    var controllers = require("./controllers");
+
     var app = express();
 
-    app.get("/", function(req, res) {
-        res.send('root path reached');
-    });
+    var rootCtrl  = controllers.rootCtrl;
+    var taskCtrl = controllers.taskCtrl;
 
-    app.get("/tasks", function(req, res) {
-        res.send('tasks index');
-    });
-
-    app.get("/tasks/:id", function(req, res) {
-        res.send("task " + req.params.id + " show page reached");
-    });
+    app.get("/", rootCtrl);
+    app.get("/tasks", taskCtrl.index);
+    app.get("/tasks/:id", taskCtrl.show);
 
     app.set("port", process.env.PORT || 3000);
     var listen_port = app.get("port");
