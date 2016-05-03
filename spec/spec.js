@@ -7,10 +7,11 @@ describe("starting express", function() {
     afterEach(function(done) {
         server.close(done);
     });
-    it("responds to root", function testRoot(done) {
+    it("receives welcome page from root", function testRoot(done) {
         request(server)
             .get("/")
-            .expect(200, {title: "Welcome"}, done);
+            .expect("Content-type", "text/html; charset=UTF-8")
+            .expect(200, done);
     });
     it("responds to task index", function testTaskIndex(done) {
         request(server)
