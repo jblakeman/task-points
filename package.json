@@ -20,6 +20,10 @@
     "supertest": "^1.2.0"
   },
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "pg": "^4.5.5",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.22.0",
+    "winston": "^2.2.0"
   }
 }
