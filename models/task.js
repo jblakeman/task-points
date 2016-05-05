@@ -1,9 +1,22 @@
 module.exports = function(sequelize, DataTypes) {
-    var Task = sequelize.define('Task', {
-        body: DataTypes.STRING,
-        estimated_time: DataTypes.INTEGER,
-        points: DataTypes.INTEGER,
-        enjoyment_level: DataTypes.INTEGER
+    var Task = sequelize.define("Task", {
+        body: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        estimated_time: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        enjoyment_level: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        points: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: null,
+        }
     }, {
         classMethods: {
             associate: function(models) {
