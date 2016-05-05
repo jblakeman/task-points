@@ -14,10 +14,8 @@ models.sequelize.sync().then(function() {
     var web_app;
     console.log(Task.associations.Subtasks.accessors);
     function getPoints(minutes, enjoyment) {
-        if (enjoyment > 1) {
-            enjoyment *= 0.5;
-        }
-        return enjoyment * (1 + (minutes * 0.06));
+        if (enjoyment > 1) { enjoyment *= 0.5; }
+        return Math.round(enjoyment * (1 + (minutes * 0.06)));
     }
     var taskSeeds = [{
             body: "Make a functional, positive reinforcement based ToDo app",
