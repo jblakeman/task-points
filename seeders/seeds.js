@@ -58,9 +58,11 @@ models.sequelize.sync().then(function() {
             subtasks.forEach(function(task) {
                 sum += task.points;
             });
-            console.log("Task:", tasks[0].body, "with points:", tasks[0].points,
-                        "has subtasks:", JSON.stringify(associated),
-                        "with a total of", sum, "points");
+            console.log("Task: \"" + tasks[0].body + "\"\n\tpoints:",
+                        tasks[0].points + "\n\tsubtasks:",
+                        JSON.stringify(subtasks) + "\n\tassociations:",
+                        JSON.stringify(associated),
+                        "\n\ttotal of subtask points:", sum);
         });
     }).then(function() {console.log("finished"); });
 });
