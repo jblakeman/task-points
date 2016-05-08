@@ -14,8 +14,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         points: {
             type: DataTypes.INTEGER,
-            allowNull: true,
-            defaultValue: null,
+            allowNull: false,
         }
     }, {
         classMethods: {
