@@ -11,6 +11,9 @@ function serverFactory() {
     logger.info("Setting up express...");
     app.use("/public", express.static(__dirname + "/public"));
     app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
     logger.info("express configured");
 
     app.get("/", rootCtrl);
