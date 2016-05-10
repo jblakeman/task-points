@@ -8,16 +8,31 @@ function logTask(task) {
 }
 
 models.sequelize.sync().then(function() {
-    var Task   = models.Task;
-    var Tag    = models.Tag;
+    var Task    = models.Task;
+    var Tag     = models.Tag;
+    var TaskSub = models.sequelize.models.TaskSub;
+    var TaskTag = models.sequelize.models.TaskTag;
     var hour = 3600;
-    var web_app;
-    console.log(Task.associations.Subtasks.accessors);
-    function getPoints(minutes, enjoyment) {
-        if (enjoyment > 1) { enjoyment *= 0.5; }
-        return Math.round(enjoyment * (1 + (minutes * 0.06)));
+    console.log(models.sequelize.models.TaskSub);
+    function setPoints(instance) {
+        if (instance.enjoyment_level > 1) {
+            instance.enjoyment_level *= 0.5;
+        }
+        instance.points = Math.round(instance.enjoyment_level *
+                                     (1 + (instance.estimated_time * 0.06)));
+        return instance;
     }
+    var destroyAlls = [
+        Task.destroy({where: {}}),
+        TaskSub.destroy({where: {}}),
+        Tag.destroy({where: {}}),
+        TaskTag.destroy({where: {}})
+    ];
     var taskSeeds = [{
+            body: "Example master",
+            estimated_time: hour,
+            enjoyment_level: 1
+        }, {
             body: "Make a functional, positive reinforcement based ToDo app",
             estimated_time: hour * 60,
             enjoyment_level: 1
@@ -48,21 +63,73 @@ models.sequelize.sync().then(function() {
         }
     ];
     taskSeeds.forEach(function(seed, index, seeds) {
-        seeds[index].points = getPoints(seed.estimated_time, seed.enjoyment_level);
+        seeds[index] = setPoints(seed);
     });
-    Task.bulkCreate(taskSeeds, {returning: true}).then(function(tasks) {
-        var subtasks = tasks.slice(1, tasks.length);
-        console.log("tasks:", JSON.stringify(subtasks));
-        return tasks[0].setSubtasks(subtasks).then(function(associated) {
-            var sum = 0;
-            subtasks.forEach(function(task) {
-                sum += task.points;
+
+    var master0, child2, child3;
+    Promise.all(destroyAlls).then(function() {
+        Task.bulkCreate(taskSeeds, {returning: true}).then(function(tasks) {
+            console.log("Tasks:", JSON.stringify(tasks));
+            var subtasks = tasks.slice(2, tasks.length);
+            console.log("Master task:", tasks[1].get({plain: true}));
+            master0 = tasks[0];
+            master1 = tasks[1];
+            return master1.setSubtasks(subtasks).then(function(associated) {
+                var sum = 0;
+                subtasks.forEach(function(task, index) {
+                    if (index === 1) {
+                        child2 = task;
+                    } else if (index === 2) {
+                        child3 = task;
+                    }
+                    console.log("Subtask", index, ":",
+                                task.get({plain: true}));
+                    sum += task.points;
+                });
+                console.log("Task: \"" + tasks[1].body + "\"\n\tpoints:",
+                            tasks[1].points + "\n\tsubtasks:",
+                            JSON.stringify(subtasks) + "\n\tassociations:",
+                            JSON.stringify(associated),
+                            "\n\ttotal of subtask points:", sum);
+                return true;
             });
-            console.log("Task: \"" + tasks[0].body + "\"\n\tpoints:",
-                        tasks[0].points + "\n\tsubtasks:",
-                        JSON.stringify(subtasks) + "\n\tassociations:",
-                        JSON.stringify(associated),
-                        "\n\ttotal of subtask points:", sum);
+        }).then(function() {
+            return master1.getSubtasks()
+                       .then(function(subs) {
+                            return subs;
+                        });
+        }).then(function(subs) {
+            master1 = master1.get({plain: true});
+            master1.subs = subs.map(function(sub) {
+                sub = sub.get({plain: true});
+                return sub;
+            });
+            console.log("Master task children:", master1.subs);
+        }).then(function() {
+            var firstGrand = {
+                body: "Weigh relational vs. non-relational DBs",
+                estimated_time: hour * 0.5,
+                enjoyment_level: 1
+            };
+            var greatGrand = {
+                body: "Documents/queries/scaling vs. " +
+                      "Relationships/updates/optimization",
+                estimated_time: hour * 0.25,
+                enjoyment_level: 1
+            };
+            firstGrand = setPoints(firstGrand);
+            greatGrand = setPoints(greatGrand);
+            // Add some descendants
+            Task.create(firstGrand).then(function(task) {
+                child3.addSubtask(task).then(function(grand) {
+                    console.log("firstGrand:", grand[0][0].get({plain: true}));
+                    Task.create(greatGrand).then(function(great) {
+                        task.addSubtask(great).then(function() {
+                            console.log("greatGrand:", JSON.stringify(great, null, 2));
+                        });
+                    });
+                });
+            });
         });
-    }).then(function() {console.log("finished"); });
+    });
 });
