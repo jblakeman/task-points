@@ -1,20 +1,25 @@
 function serverFactory() {
     var express     = require("express");
-    var controllers = require("./controllers");
+    var app         = express();
+    var bodyParser  = require("body-parser");
+    var models      = require("./models");
     var logger      = require("./logger.js");
-
-    var app = express();
+    var controllers = require("./controllers")(models, logger);
+    var rootCtrl    = controllers.rootCtrl;
+    var taskCtrl    = controllers.taskCtrl;
 
     logger.info("Setting up express...");
     app.use("/public", express.static(__dirname + "/public"));
+    app.use(bodyParser.json());
     logger.info("express configured");
 
-    var rootCtrl  = controllers.rootCtrl;
-    var taskCtrl = controllers.taskCtrl;
-
     app.get("/", rootCtrl);
-    app.get("/tasks", taskCtrl.index);
-    app.get("/tasks/:id", taskCtrl.show);
+    app.get("/api/tasks", taskCtrl.index);
+    app.get("/api/tasks/:id", taskCtrl.show);
+    app.post("/api/tasks", taskCtrl.create);
+    app.put("/api/tasks/:id", taskCtrl.update);
+    app.delete("/api/tasks/:id", taskCtrl.destroy);
+    app.post("/api/tasks/:id", taskCtrl.addSub);
 
     logger.info("Setting up server to listen...");
     app.set("port", process.env.PORT || 3000);
