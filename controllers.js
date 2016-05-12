@@ -66,18 +66,18 @@ function controllers(models, logger) {
                 return node.getSubtasks().then(function(subs) {
                     return {task: node, children: subs};
                 }).then(function(t) {
-                    var inorders = [];
+                    var inOrders = [];
                     if (t.children.length > 0) {
                         // Traverse all the subtasks if they exist (i-N in-order)
                         t.children.forEach(function(child, i) {
-                            orders.push(traverse(child).then(function(children) {
+                            inOrders.push(traverse(child).then(function(children) {
                                 t.children[i] = children;
                                 return true;
                             }));
                         });
                     }
                     // completes a node traversal (post-order)
-                    return Promise.all(orders).then(function() {
+                    return Promise.all(inOrders).then(function() {
                         return t;
                     });
                 });
